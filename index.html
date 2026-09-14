@@ -10,7 +10,7 @@
         body { background: #121212; color: #fff; padding: 15px; margin: 0; }
         
         .admin-controls {
-            background: #222; padding: 15px; border-radius: 8px; margin-bottom: 20px;
+            background: #222; padding: 15px; border-radius: 8px; margin-bottom: 15px;
             display: flex; gap: 15px; align-items: center; flex-wrap: wrap;
         }
         .color-btn {
@@ -24,6 +24,16 @@
             border-radius: 6px; font-weight: bold; cursor: pointer; margin-left: auto; font-size: 13px;
         }
         .reset-btn:hover { background: #b71c1c; }
+
+        /* Summary Box Styling */
+        .summary-box {
+            background: #1e1e1e; border: 1px solid #333; padding: 15px; border-radius: 8px;
+            margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-around;
+        }
+        .summary-item {
+            text-align: center; font-size: 14px;
+        }
+        .summary-item span { display: block; font-weight: bold; font-size: 16px; margin-top: 4px; }
 
         .seat-map-outer {
             width: 100%; overflow-x: auto; background: #1e1e1e; padding: 20px 15px;
@@ -71,6 +81,14 @@
         <button class="reset-btn" id="resetBtn" onclick="handleResetClick()">Reset All (3 Clicks Left)</button>
     </div>
 
+    <!-- ရောင်းချရမှု စာရင်းချုပ် (Summary Box) -->
+    <div class="summary-box">
+        <div class="summary-item" style="color: #ff3333;">အနီ (ရောင်းပြီး): <span id="count-red">0 လုံး</span> (<span id="price-red">0</span> Ks)</div>
+        <div class="summary-item" style="color: #ffcc00;">အဝါ: <span id="count-yellow">0 လုံး</span> (<span id="price-yellow">0</span> Ks)</div>
+        <div class="summary-item" style="color: #9933ee;">ခရမ်း: <span id="count-purple">0 လုံး</span> (<span id="price-purple">0</span> Ks)</div>
+        <div class="summary-item" style="color: #ffeb3b; border-left: 1px solid #444; padding-left: 20px;">စုစုပေါင်းဝင်ငွေ: <span id="total-price">0</span> Ks</div>
+    </div>
+
     <div class="seat-map-outer">
         <div class="seat-map-inner">
             <div class="screen-title">Paradiso Cinema Pyay - Seat Plan</div>
@@ -95,27 +113,27 @@
         const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
         const seatStructure = [
-            { label: 'A', class: 'price-4000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
-            { label: 'B', class: 'price-5000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
-            { label: 'C', class: 'price-5000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
-            { label: 'D', class: 'price-5000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
-            { label: 'E', class: 'price-6000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
-            { label: 'F', class: 'price-6000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
-            { label: 'G', class: 'price-7000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
-            { label: 'H', class: 'price-7000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'A', price: 4000, class: 'price-4000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'B', price: 5000, class: 'price-5000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'C', price: 5000, class: 'price-5000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'D', price: 5000, class: 'price-5000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'E', price: 6000, class: 'price-6000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'F', price: 6000, class: 'price-6000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'G', price: 7000, class: 'price-7000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'H', price: 7000, class: 'price-7000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
             { type: 'gap' },
-            { label: 'I', class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'J', class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'K', class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'L', class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'M', class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'N', class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'O', class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'P', class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'Q', class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'I', price: 8000, class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'J', price: 8000, class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'K', price: 8000, class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'L', price: 8000, class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'M', price: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'N', price: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'O', price: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'P', price: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'Q', price: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
             { type: 'gap' },
-            { label: 'R', class: 'price-20000', seats: [10,9,8,7,6, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 5,4,3,2,1] },
-            { label: 'S', class: 'price-20000', seats: [10,9,8,7,6, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 5,4,3,2,1] }
+            { label: 'R', price: 20000, class: 'price-20000', seats: [10,9,8,7,6, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 5,4,3,2,1] },
+            { label: 'S', price: 20000, class: 'price-20000', seats: [10,9,8,7,6, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 5,4,3,2,1] }
         ];
 
         let selectedAdminColor = null;
@@ -163,6 +181,43 @@
                     seat.classList.add('admin-' + seatData[seatId]);
                 }
             });
+            calculateSummary();
+        }
+
+        // အရောင်အလိုက် အရေအတွက်နှင့် ဈေးနှုန်းတွက်ချက်သည့် ဖန်ရှင်
+        function calculateSummary() {
+            let counts = { red: 0, yellow: 0, purple: 0 };
+            let prices = { red: 0, yellow: 0, purple: 0 };
+
+            for (let seatId in seatData) {
+                let color = seatData[seatId]; // red, yellow, purple
+                if (counts[color] !== undefined) {
+                    counts[color]++;
+                    
+                    // Seat ID မှ row ကို ထုတ်ယူမည် (ဥပမာ: seat-A-1 မှ 'A' ကို ယူမည်)
+                    let parts = seatId.split('-');
+                    let rowLabel = parts[1];
+                    
+                    // သက်ဆိုင်ရာ row ရဲ့ ဈေးနှုန်းကို ရှာမည်
+                    let rowObj = seatStructure.find(r => r.label === rowLabel);
+                    if (rowObj) {
+                        prices[color] += rowObj.price;
+                    }
+                }
+            }
+
+            // HTML ပေါ်သို့ တန်ဖိုးများ ထည့်သွင်းခြင်း
+            document.getElementById('count-red').innerText = counts.red + ' လုံး';
+            document.getElementById('price-red').innerText = prices.red.toLocaleString();
+
+            document.getElementById('count-yellow').innerText = counts.yellow + ' လုံး';
+            document.getElementById('price-yellow').innerText = prices.yellow.toLocaleString();
+
+            document.getElementById('count-purple').innerText = counts.purple + ' လုံး';
+            document.getElementById('price-purple').innerText = prices.purple.toLocaleString();
+
+            let grandTotal = prices.red + prices.yellow + prices.purple;
+            document.getElementById('total-price').innerText = grandTotal.toLocaleString();
         }
 
         const container = document.getElementById('seatContainer');
@@ -221,7 +276,7 @@
         let resetClickCount = 0;
         let resetTimer = null;
 
-        function handleResetClick() {
+        async function handleResetClick() {
             resetClickCount++;
             const resetBtn = document.getElementById('resetBtn');
             const remaining = 3 - resetClickCount;
@@ -237,7 +292,7 @@
                 clearTimeout(resetTimer);
                 seatData = {};
                 updateUI();
-                saveSeats();
+                await saveSeats();
                 resetClickCount = 0;
                 resetBtn.innerText = 'Cleared!';
                 setTimeout(() => {
