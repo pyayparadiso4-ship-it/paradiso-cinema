@@ -138,7 +138,6 @@
 
         let selectedAdminColor = null;
         let seatData = {};
-        let isResetting = false; // ဒေတာ အသစ်ပြန်ဝင်လာတာကို ခေတ္တတားဆီးရန်
 
         function selectColor(color, el) {
             selectedAdminColor = color;
@@ -147,20 +146,25 @@
         }
 
         async function fetchSeats() {
-            if (isResetting) return; // Reset လုပ်နေစဉ်အတွင်း ဆာဗာမှ ဒေတာအဟောင်း ပြန်ဆွဲတင်ခြင်းကို တားဆီးသည်
             try {
                 const response = await fetch(API_URL + '/latest', {
                     headers: { 'X-Master-Key': MASTER_KEY }
                 });
                 const result = await response.json();
                 seatData = result.record || {};
+                
+                // အကယ်၍ ဆာဗာမှာ reset လုပ်ထားတဲ့ အမှတ်အသားတွေ့ရင် ဒေတာကို အလွတ်ဖြစ်အောင် လုပ်မည်
+                if (seatData._reset) {
+                    seatData = {};
+                }
+                
                 updateUI();
             } catch (err) {
                 console.error("Error fetching data", err);
             }
         }
 
-        async function saveSeats() {
+        async function saveSeats(dataToSave) {
             try {
                 await fetch(API_URL, {
                     method: 'PUT',
@@ -168,7 +172,7 @@
                         'Content-Type': 'application/json',
                         'X-Master-Key': MASTER_KEY
                     },
-                    body: JSON.stringify(seatData)
+                    body: JSON.stringify(dataToSave)
                 });
             } catch (err) {
                 console.error("Error saving data", err);
@@ -248,13 +252,13 @@
                         }
                         seatData[seatId] = selectedAdminColor;
                         updateUI();
-                        await saveSeats();
+                        await saveSeats(seatData);
                     };
 
                     seatBtn.ondblclick = async () => {
                         delete seatData[seatId];
                         updateUI();
-                        await saveSeats();
+                        await saveSeats(seatData);
                     };
 
                     rowDiv.appendChild(seatBtn);
@@ -286,15 +290,13 @@
                 }, 2000);
             } else {
                 clearTimeout(resetTimer);
-                isResetting = true; // ဆာဗာမှ ဒေတာအဟောင်း ထပ်ဆွဲမလာအောင် ချက်ချင်းပိတ်မည်
-                seatData = {};      // ဒေတာအလွတ်ဖြစ်အောင် လုပ်မည်
-                updateUI();         // မျက်နှာပြင်ပေါ်က အရောင်နဲ့ စာရင်းချုပ်များကို ချက်ချင်း ရှင်းမည်
                 
-                await saveSeats();  // အွန်လိုင်း Cloud ဆီသို့ ဒေတာအလွတ် ပို့ပြီး အပြီးတိုင် ဖျက်မည်
+                // မျက်နှာပြင်ပေါ်က ဒေတာများကို အရင်ရှင်းမည်
+                seatData = {};
+                updateUI();
                 
-                setTimeout(() => {
-                    isResetting = false; // ပြီးမှ ပြန်ဖွင့်မည်
-                }, 1000);
+                // ဆာဗာသို့ အချက်အလက်အသစ် ပို့ပြီး အပြည့်အစုံ ဖျက်မည်
+                await saveSeats({ _reset: true });
 
                 resetClickCount = 0;
                 resetBtn.innerText = 'Cleared!';
