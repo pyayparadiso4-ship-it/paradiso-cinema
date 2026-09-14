@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paradiso Pyay Cinema - Seat Management (JSONBin)</title>
+    <title>Paradiso Pyay Cinema - Multi-Show & Movie Management</title>
     
     <style>
         * { box-sizing: border-box; font-family: Segoe UI, Tahoma, sans-serif; }
@@ -25,27 +25,77 @@
         }
         .reset-btn:hover { background: #b71c1c; }
 
-        /* Summary Box Styling */
+        /* ဆက်တင်များ ပြင်ဆင်ရန် Admin Panel */
+        .settings-panel {
+            background: #1a1a1a; border: 1px solid #444; padding: 15px; border-radius: 8px;
+            margin-bottom: 15px; display: flex; flex-direction: column; gap: 12px;
+        }
+        .settings-row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; font-size: 13px; }
+        .settings-group { display: flex; align-items: center; gap: 8px; }
+        .settings-group input {
+            background: #333; border: 1px solid #555; color: #fff; padding: 6px 10px;
+            border-radius: 4px; font-size: 13px;
+        }
+        .movie-inputs-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; width: 100%;
+            background: #222; padding: 10px; border-radius: 6px; border: 1px dashed #444;
+        }
+        .movie-input-item { display: flex; align-items: center; gap: 5px; font-size: 12px; }
+        .movie-input-item input {
+            background: #333; border: 1px solid #555; color: #fff; padding: 4px 8px;
+            border-radius: 4px; width: 100%; font-size: 12px;
+        }
+        .save-settings-btn {
+            background: #2e7d32; color: #fff; border: none; padding: 8px 20px;
+            border-radius: 4px; font-weight: bold; cursor: pointer; align-self: flex-start;
+        }
+        .save-settings-btn:hover { background: #1b5e20; }
+
+        /* မျက်နှာပြင် ၁၂ ခု ရွေးရန် Tabs */
+        .screens-nav {
+            background: #181818; padding: 12px; border-radius: 8px; margin-bottom: 15px;
+            display: flex; gap: 8px; overflow-x: auto; white-space: nowrap;
+        }
+        .screen-tab {
+            background: #333; color: #bbb; border: 1px solid #444; padding: 8px 14px;
+            border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold;
+            transition: all 0.2s;
+        }
+        .screen-tab:hover { background: #444; color: #fff; }
+        .screen-tab.active { background: #ffeb3b; color: #000; border-color: #ffeb3b; }
+
         .summary-box {
             background: #1e1e1e; border: 1px solid #333; padding: 15px; border-radius: 8px;
             margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-around;
         }
-        .summary-item {
-            text-align: center; font-size: 14px;
-        }
+        .summary-item { text-align: center; font-size: 14px; }
         .summary-item span { display: block; font-weight: bold; font-size: 16px; margin-top: 4px; }
 
         .seat-map-outer {
             width: 100%; overflow-x: auto; background: #1e1e1e; padding: 20px 15px;
             border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
-        .seat-map-inner { display: inline-block; white-space: nowrap; min-width: 980px; }
-        .screen-title { text-align: center; font-size: 18px; font-weight: bold; color: #ffeb3b; margin-bottom: 10px; letter-spacing: 1px; }
+        .seat-map-inner { display: inline-block; white-space: nowrap; min-width: 980px; width: 100%; }
+        
+        /* ဇာတ်ကားနာမည်၊ ရက်စွဲနှင့် ပွဲချိန်ပြမည့် ခေါင်းစဉ်ပိုင်း */
+        .movie-display-header {
+            text-align: center; background: #252525; border: 1px solid #444; padding: 12px;
+            border-radius: 6px; margin-bottom: 15px;
+        }
+        .movie-title-text { font-size: 20px; font-weight: bold; color: #ffeb3b; margin-bottom: 4px; }
+        .movie-info-sub { font-size: 13px; color: #aaa; }
+
         .screen { background: #e0e0e0; color: #000; text-align: center; padding: 8px; font-weight: bold; margin: 0 auto 25px auto; width: 100%; border-radius: 4px; box-shadow: 0 0 15px rgba(255,255,255,0.4); letter-spacing: 2px; }
         
-        .seat-row { display: flex; gap: 5px; margin-bottom: 6px; align-items: center; }
+        .seat-row { display: flex; gap: 5px; margin-bottom: 6px; align-items: center; position: relative; }
         .row-label { width: 35px; min-width: 35px; line-height: 32px; text-align: center; font-weight: bold; color: #fff; font-size: 14px; margin-left: 10px; }
         
+        .tier-summary-badge {
+            margin-left: 15px; font-size: 12px; color: #ffeb3b; font-weight: bold;
+            background: #2a2a2a; padding: 6px 12px; border-radius: 4px; border: 1px solid #444;
+            min-width: 140px; display: inline-block; text-align: center;
+        }
+
         .seat {
             width: 26px; height: 32px; min-width: 26px; border-radius: 3px; font-size: 11px;
             display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
@@ -72,16 +122,45 @@
 </head>
 <body>
 
+    <!-- Admin အရောင်ရွေးချယ်မှု -->
     <div class="admin-controls">
         <span><b>Admin အရောင်ရွေးပါ:</b></span>
         <button class="color-btn" style="background:#ff3333;" onclick="selectColor('red', this)">အနီ - ရောင်းပြီး</button>
         <button class="color-btn" style="background:#ffcc00; color:#000;" onclick="selectColor('yellow', this)">အဝါ</button>
         <button class="color-btn" style="background:#9933ee;" onclick="selectColor('purple', this)">ခရမ်း</button>
         
-        <button class="reset-btn" id="resetBtn" onclick="handleResetClick()">Reset All (3 Clicks Left)</button>
+        <button class="reset-btn" id="resetBtn" onclick="handleResetClick()">Reset Current Screen (3 Clicks)</button>
     </div>
 
-    <!-- ရောင်းချရမှု စာရင်းချုပ် (Summary Box) -->
+    <!-- ရက်စွဲ၊ ပွဲချိန်နှင့် ဇာတ်ကားနာမည်များ စိတ်ကြိုက်ပြောင်းရန် Admin Panel -->
+    <div class="settings-panel">
+        <div class="settings-row">
+            <div class="settings-group">
+                <label><b>ရက်စွဲ (၃ ရက်စာ):</b></label>
+                <input type="date" id="date1">
+                <input type="date" id="date2">
+                <input type="date" id="date3">
+            </div>
+            <div class="settings-group">
+                <label><b>ပွဲချိန် (၄ ချိန်):</b></label>
+                <input type="text" id="time1" placeholder="ပွဲချိန် ၁" style="width:100px;">
+                <input type="text" id="time2" placeholder="ပွဲချိန် ၂" style="width:100px;">
+                <input type="text" id="time3" placeholder="ပွဲချိန် ၃" style="width:100px;">
+                <input type="text" id="time4" placeholder="ပွဲချိန် ၄" style="width:100px;">
+            </div>
+        </div>
+        <div>
+            <label style="font-size: 13px; color: #ffeb3b; font-weight: bold;">Screen ၁၂ ခုအတွက် ဇာတ်ကားနာမည်များ သတ်မှတ်ရန်:</label>
+            <div class="movie-inputs-grid" id="movieInputsContainer">
+                <!-- Javascript ဖြင့် Screen 1 မှ 12 ထိ ဇာတ်ကားနာမည်ထည့်ရန် Box များကို အလိုအလျောက် ဖန်တီးပေးပါမည် -->
+            </div>
+        </div>
+        <button class="save-settings-btn" onclick="saveSettings()">ချိန်ညှိချက်များနှင့် ဇာတ်ကားနာမည်များ သိမ်းမည်</button>
+    </div>
+
+    <!-- မျက်နှာပြင် ၁၂ ခု ရွေးရန် ခလုတ်များ -->
+    <div class="screens-nav" id="screensNav"></div>
+
     <div class="summary-box">
         <div class="summary-item" style="color: #ff3333;">အနီ (ရောင်းပြီး): <span id="count-red">0 ခုံ</span> (<span id="price-red">0</span> Ks)</div>
         <div class="summary-item" style="color: #ffcc00;">အဝါ: <span id="count-yellow">0 ခုံ</span> (<span id="price-yellow">0</span> Ks)</div>
@@ -91,7 +170,12 @@
 
     <div class="seat-map-outer">
         <div class="seat-map-inner">
-            <div class="screen-title">Paradiso Cinema Pyay - Seat Plan</div>
+            <!-- ဇာတ်ကားနာမည်၊ ရက်စွဲနှင့် ပွဲချိန်ကို ဇယားကွက်အထက်တွင် ထင်ရှားစွာပြရန် -->
+            <div class="movie-display-header">
+                <div class="movie-title-text" id="displayMovieTitle">ဇာတ်ကားနာမည် မရှိသေးပါ</div>
+                <div class="movie-info-sub" id="displayMovieInfo">ရက်စွဲနှင့် ပွဲချိန် ရွေးချယ်ပါ</div>
+            </div>
+
             <div class="screen">SCREEN</div>
             <div id="seatContainer"></div>
         </div>
@@ -113,31 +197,41 @@
         const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
         const seatStructure = [
-            { label: 'A', price: 4000, class: 'price-4000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
-            { label: 'B', price: 5000, class: 'price-5000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
-            { label: 'C', price: 5000, class: 'price-5000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
-            { label: 'D', price: 5000, class: 'price-5000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
-            { label: 'E', price: 6000, class: 'price-6000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
-            { label: 'F', price: 6000, class: 'price-6000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
-            { label: 'G', price: 7000, class: 'price-7000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
-            { label: 'H', price: 7000, class: 'price-7000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'A', price: 4000, tier: 4000, class: 'price-4000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'B', price: 5000, tier: 5000, class: 'price-5000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'C', price: 5000, tier: 5000, class: 'price-5000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'D', price: 5000, tier: 5000, class: 'price-5000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'E', price: 6000, tier: 6000, class: 'price-6000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'F', price: 6000, tier: 6000, class: 'price-6000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'G', price: 7000, tier: 7000, class: 'price-7000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
+            { label: 'H', price: 7000, tier: 7000, class: 'price-7000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
             { type: 'gap' },
-            { label: 'I', price: 8000, class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'J', price: 8000, class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'K', price: 8000, class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'L', price: 8000, class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'M', price: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'N', price: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'O', price: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'P', price: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
-            { label: 'Q', price: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'I', price: 8000, tier: 8000, class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'J', price: 8000, tier: 8000, class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'K', price: 8000, tier: 8000, class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'L', price: 8000, tier: 8000, class: 'price-8000', seats: [20,19,18,17,16,15,14,13,12,11, 0,0,0,0,0,0,0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'M', price: 8000, tier: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'N', price: 8000, tier: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'O', price: 8000, tier: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'P', price: 8000, tier: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
+            { label: 'Q', price: 8000, tier: 8000, class: 'price-8000', seats: [24,23,22,21,20,19,18,17,16,15, 0,0, 14,13,12,11, 0,0, 10,9,8,7,6,5,4,3,2,1] },
             { type: 'gap' },
-            { label: 'R', price: 20000, class: 'price-20000', seats: [10,9,8,7,6, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 5,4,3,2,1] },
-            { label: 'S', price: 20000, class: 'price-20000', seats: [10,9,8,7,6, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 5,4,3,2,1] }
+            { label: 'R', price: 20000, tier: 20000, class: 'price-20000', seats: [10,9,8,7,6, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 5,4,3,2,1] },
+            { label: 'S', price: 20000, tier: 20000, class: 'price-20000', seats: [10,9,8,7,6, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 5,4,3,2,1] }
         ];
 
+        const tierMiddleRows = { 4000: 'A', 5000: 'C', 6000: 'F', 7000: 'H', 8000: 'M', 20000: 'S' };
+
         let selectedAdminColor = null;
-        let seatData = {};
+        let globalData = {
+            settings: {
+                dates: ["2026-06-01", "2026-06-02", "2026-06-03"],
+                times: ["10:00 AM", "01:00 PM", "04:00 PM", "07:00 PM"],
+                movies: {} // screen_1 to screen_12 ဇာတ်ကားနာမည်များ
+            },
+            screens: {}
+        };
+        let currentScreenId = 'screen_1';
 
         function selectColor(color, el) {
             selectedAdminColor = color;
@@ -145,26 +239,27 @@
             el.classList.add('selected');
         }
 
-        async function fetchSeats() {
+        async function fetchBinData() {
             try {
                 const response = await fetch(API_URL + '/latest', {
                     headers: { 'X-Master-Key': MASTER_KEY }
                 });
                 const result = await response.json();
-                seatData = result.record || {};
-                
-                // အကယ်၍ ဆာဗာမှာ reset လုပ်ထားတဲ့ အမှတ်အသားတွေ့ရင် ဒေတာကို အလွတ်ဖြစ်အောင် လုပ်မည်
-                if (seatData._reset) {
-                    seatData = {};
+                if (result.record && Object.keys(result.record).length > 0) {
+                    globalData = result.record;
                 }
-                
+                initSettingsUI();
+                buildScreensNav();
                 updateUI();
             } catch (err) {
                 console.error("Error fetching data", err);
+                initSettingsUI();
+                buildScreensNav();
+                updateUI();
             }
         }
 
-        async function saveSeats(dataToSave) {
+        async function saveBinData() {
             try {
                 await fetch(API_URL, {
                     method: 'PUT',
@@ -172,30 +267,167 @@
                         'Content-Type': 'application/json',
                         'X-Master-Key': MASTER_KEY
                     },
-                    body: JSON.stringify(dataToSave)
+                    body: JSON.stringify(globalData)
                 });
             } catch (err) {
                 console.error("Error saving data", err);
             }
         }
 
+        function initSettingsUI() {
+            if (!globalData.settings) {
+                globalData.settings = {
+                    dates: ["2026-06-01", "2026-06-02", "2026-06-03"],
+                    times: ["10:00 AM", "01:00 PM", "04:00 PM", "07:00 PM"],
+                    movies: {}
+                };
+            }
+            document.getElementById('date1').value = globalData.settings.dates[0] || '';
+            document.getElementById('date2').value = globalData.settings.dates[1] || '';
+            document.getElementById('date3').value = globalData.settings.dates[2] || '';
+
+            document.getElementById('time1').value = globalData.settings.times[0] || '';
+            document.getElementById('time2').value = globalData.settings.times[1] || '';
+            document.getElementById('time3').value = globalData.settings.times[2] || '';
+            document.getElementById('time4').value = globalData.settings.times[3] || '';
+
+            // ဇာတ်ကားနာမည်ထည့်ရန် Input Box ၁၂ ခုကို ဖန်တီးခြင်း
+            const movieContainer = document.getElementById('movieInputsContainer');
+            movieContainer.innerHTML = '';
+            for (let i = 1; i <= 12; i++) {
+                let sKey = `screen_${i}`;
+                let mName = (globalData.settings.movies && globalData.settings.movies[sKey]) ? globalData.settings.movies[sKey] : '';
+                
+                let div = document.createElement('div');
+                div.className = 'movie-input-item';
+                div.innerHTML = `<span>S${i}:</span><input type="text" id="m_input_${i}" value="${mName}" placeholder="ဇာတ်ကားနာမည်">`;
+                movieContainer.appendChild(div);
+            }
+        }
+
+        async function saveSettings() {
+            globalData.settings.dates = [
+                document.getElementById('date1').value,
+                document.getElementById('date2').value,
+                document.getElementById('date3').value
+            ];
+            globalData.settings.times = [
+                document.getElementById('time1').value,
+                document.getElementById('time2').value,
+                document.getElementById('time3').value,
+                document.getElementById('time4').value
+            ];
+
+            if (!globalData.settings.movies) globalData.settings.movies = {};
+            for (let i = 1; i <= 12; i++) {
+                let val = document.getElementById(`m_input_${i}`).value;
+                globalData.settings.movies[`screen_${i}`] = val;
+            }
+
+            buildScreensNav();
+            updateUI();
+            await saveBinData();
+            alert('ဆက်တင်များနှင့် ဇာတ်ကားနာမည်များကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ!');
+        }
+
+        function buildScreensNav() {
+            const nav = document.getElementById('screensNav');
+            nav.innerHTML = '';
+            
+            const dates = globalData.settings.dates;
+            const times = globalData.settings.times;
+            const movies = globalData.settings.movies || {};
+
+            let count = 1;
+            for (let d = 0; d < 3; d++) {
+                let dateStr = dates[d] ? dates[d] : `Day ${d+1}`;
+                for (let t = 0; t < 4; t++) {
+                    let timeStr = times[t] ? times[t] : `Show ${t+1}`;
+                    let sId = `screen_${count}`;
+                    let movieShort = movies[sId] ? ` - ${movies[sId]}` : '';
+                    
+                    const btn = document.createElement('button');
+                    btn.className = `screen-tab ${sId === currentScreenId ? 'active' : ''}`;
+                    btn.innerText = `[S${count}] ${dateStr} (${timeStr})${movieShort}`;
+                    btn.onclick = () => {
+                        currentScreenId = sId;
+                        buildScreensNav();
+                        updateUI();
+                    };
+                    nav.appendChild(btn);
+                    count++;
+                }
+            }
+        }
+
+        function getActiveScreenSeats() {
+            if (!globalData.screens) globalData.screens = {};
+            if (!globalData.screens[currentScreenId]) globalData.screens[currentScreenId] = {};
+            return globalData.screens[currentScreenId];
+        }
+
         function updateUI() {
+            let screenIndex = parseInt(currentScreenId.replace('screen_', '')) - 1;
+            let dIndex = Math.floor(screenIndex / 4);
+            let tIndex = screenIndex % 4;
+            
+            let dateText = (globalData.settings.dates && globalData.settings.dates[dIndex]) ? globalData.settings.dates[dIndex] : `Day ${dIndex+1}`;
+            let timeText = (globalData.settings.times && globalData.settings.times[tIndex]) ? globalData.settings.times[tIndex] : `Show ${tIndex+1}`;
+            let movieName = (globalData.settings.movies && globalData.settings.movies[currentScreenId]) ? globalData.settings.movies[currentScreenId] : 'ဇာတ်ကားနာမည် ထည့်ရန်ကျန်ပါသေးသည်';
+
+            // ဇယားကွက်အောက်/အပေါ်ရှိ Header တွင် ဇာတ်ကားနာမည်နှင့် အချက်အလက်များပြသရန်
+            document.getElementById('displayMovieTitle').innerText = movieName;
+            document.getElementById('displayMovieInfo').innerText = `Screen ${screenIndex + 1} | ရက်စွဲ: ${dateText} | ပွဲချိန်: ${timeText}`;
+
+            let screenSeats = getActiveScreenSeats();
+
             document.querySelectorAll('.seat').forEach(seat => {
                 seat.classList.remove('admin-red', 'admin-yellow', 'admin-purple');
                 const seatId = seat.id;
-                if (seatData[seatId]) {
-                    seat.classList.add('admin-' + seatData[seatId]);
+                if (screenSeats[seatId]) {
+                    seat.classList.add('admin-' + screenSeats[seatId]);
                 }
             });
             calculateSummary();
         }
 
         function calculateSummary() {
+            let screenSeats = getActiveScreenSeats();
             let counts = { red: 0, yellow: 0, purple: 0 };
             let prices = { red: 0, yellow: 0, purple: 0 };
 
-            for (let seatId in seatData) {
-                let color = seatData[seatId];
+            let tierStats = { 4000: { count: 0, total: 0 }, 5000: { count: 0, total: 0 }, 6000: { count: 0, total: 0 }, 7000: { count: 0, total: 0 }, 8000: { count: 0, total: 0 }, 20000: { count: 0, total: 0 } };
+
+            seatStructure.forEach(row => {
+                if (row.type !== 'gap') {
+                    row.seats.forEach(num => {
+                        if (num !== 0) {
+                            let seatId = 'seat-' + row.label + '-' + num;
+                            if (screenSeats[seatId]) {
+                                tierStats[row.tier].count++;
+                                tierStats[row.tier].total += row.price;
+                            }
+                        }
+                    });
+                }
+            });
+
+            for (let tier in tierMiddleRows) {
+                let badgeEl = document.getElementById('tier-badge-' + tier);
+                if (badgeEl) {
+                    let stat = tierStats[tier];
+                    if (stat.count > 0) {
+                        badgeEl.innerText = `${stat.count}ခုံ / ${stat.total.toLocaleString()} Ks`;
+                        badgeEl.style.display = 'inline-block';
+                    } else {
+                        badgeEl.innerText = '';
+                        badgeEl.style.display = 'none';
+                    }
+                }
+            }
+
+            for (let seatId in screenSeats) {
+                let color = screenSeats[seatId];
                 if (counts[color] !== undefined) {
                     counts[color]++;
                     let parts = seatId.split('-');
@@ -209,10 +441,8 @@
 
             document.getElementById('count-red').innerText = counts.red + ' ခုံ';
             document.getElementById('price-red').innerText = prices.red.toLocaleString();
-
             document.getElementById('count-yellow').innerText = counts.yellow + ' ခုံ';
             document.getElementById('price-yellow').innerText = prices.yellow.toLocaleString();
-
             document.getElementById('count-purple').innerText = counts.purple + ' ခုံ';
             document.getElementById('price-purple').innerText = prices.purple.toLocaleString();
 
@@ -220,7 +450,9 @@
             document.getElementById('total-price').innerText = grandTotal.toLocaleString();
         }
 
+        // ဇယားကွက်တည်ဆောက်ခြင်း
         const container = document.getElementById('seatContainer');
+        container.innerHTML = '';
 
         seatStructure.forEach(row => {
             if (row.type === 'gap') {
@@ -250,15 +482,17 @@
                             alert('ကျေးဇူးပြု၍ အပေါ်ဘက်မှ အနီ/အဝါ/ခရမ်း ရောင်တစ်မျိုးမျိုးကို အရင်နှိပ်ပါ။');
                             return;
                         }
-                        seatData[seatId] = selectedAdminColor;
+                        let screenSeats = getActiveScreenSeats();
+                        screenSeats[seatId] = selectedAdminColor;
                         updateUI();
-                        await saveSeats(seatData);
+                        await saveBinData();
                     };
 
                     seatBtn.ondblclick = async () => {
-                        delete seatData[seatId];
+                        let screenSeats = getActiveScreenSeats();
+                        delete screenSeats[seatId];
                         updateUI();
-                        await saveSeats(seatData);
+                        await saveBinData();
                     };
 
                     rowDiv.appendChild(seatBtn);
@@ -269,6 +503,16 @@
             labelDiv.className = 'row-label';
             labelDiv.innerText = row.label;
             rowDiv.appendChild(labelDiv);
+
+            for (let tier in tierMiddleRows) {
+                if (tierMiddleRows[tier] === row.label) {
+                    const badgeDiv = document.createElement('div');
+                    badgeDiv.className = 'tier-summary-badge';
+                    badgeDiv.id = 'tier-badge-' + tier;
+                    badgeDiv.style.display = 'none';
+                    rowDiv.appendChild(badgeDiv);
+                }
+            }
 
             container.appendChild(rowDiv);
         });
@@ -282,32 +526,27 @@
             const remaining = 3 - resetClickCount;
 
             if (resetClickCount < 3) {
-                resetBtn.innerText = `Click ${remaining} More Time${remaining > 1 ? 's' : ''}`;
+                resetBtn.innerText = `Click ${remaining} More Times`;
                 clearTimeout(resetTimer);
                 resetTimer = setTimeout(() => {
                     resetClickCount = 0;
-                    resetBtn.innerText = 'Reset All (3 Clicks Left)';
+                    resetBtn.innerText = 'Reset Current Screen (3 Clicks)';
                 }, 2000);
             } else {
                 clearTimeout(resetTimer);
-                
-                // မျက်နှာပြင်ပေါ်က ဒေတာများကို အရင်ရှင်းမည်
-                seatData = {};
+                globalData.screens[currentScreenId] = {};
                 updateUI();
-                
-                // ဆာဗာသို့ အချက်အလက်အသစ် ပို့ပြီး အပြည့်အစုံ ဖျက်မည်
-                await saveSeats({ _reset: true });
+                await saveBinData();
 
                 resetClickCount = 0;
                 resetBtn.innerText = 'Cleared!';
                 setTimeout(() => {
-                    resetBtn.innerText = 'Reset All (3 Clicks Left)';
+                    resetBtn.innerText = 'Reset Current Screen (3 Clicks)';
                 }, 1500);
             }
         }
 
-        fetchSeats();
-        setInterval(fetchSeats, 3000);
+        fetchBinData();
     </script>
 </body>
 </html>
