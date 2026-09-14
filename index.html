@@ -10,99 +10,120 @@
         body { background: #121212; color: #fff; padding: 15px; margin: 0; }
         
         .admin-controls {
-            background: #222; padding: 15px; border-radius: 8px; margin-bottom: 15px;
-            display: flex; gap: 15px; align-items: center; flex-wrap: wrap;
+            background: #222; padding: 12px 15px; border-radius: 8px; margin-bottom: 12px;
+            display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
         }
         .color-btn {
-            width: 90px; height: 38px; border: 2px solid transparent; border-radius: 6px;
-            color: #fff; font-weight: bold; cursor: pointer; text-shadow: 0 1px 2px #000;
+            width: 85px; height: 35px; border: 2px solid transparent; border-radius: 6px;
+            color: #fff; font-weight: bold; cursor: pointer; text-shadow: 0 1px 2px #000; font-size: 12px;
         }
         .color-btn.selected { border-color: #fff; outline: 3px solid #ffeb3b; }
 
         .reset-btn {
-            background: #d32f2f; color: #fff; border: none; padding: 0 16px; height: 38px;
-            border-radius: 6px; font-weight: bold; cursor: pointer; margin-left: auto; font-size: 13px;
+            background: #d32f2f; color: #fff; border: none; padding: 0 14px; height: 35px;
+            border-radius: 6px; font-weight: bold; cursor: pointer; margin-left: auto; font-size: 12px;
         }
         .reset-btn:hover { background: #b71c1c; }
 
-        /* ဆက်တင်များ ပြင်ဆင်ရန် Admin Panel */
+        /* ဆက်တင်များ ပြင်ဆင်ရန် Admin Panel (Collapsible) */
         .settings-panel {
-            background: #1a1a1a; border: 1px solid #444; padding: 15px; border-radius: 8px;
-            margin-bottom: 15px; display: flex; flex-direction: column; gap: 12px;
+            background: #1a1a1a; border: 1px solid #444; border-radius: 8px;
+            margin-bottom: 15px; overflow: hidden;
         }
-        .settings-row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; font-size: 13px; }
-        .settings-group { display: flex; align-items: center; gap: 8px; }
+        .settings-header {
+            background: #252525; padding: 10px 15px; display: flex; justify-content: space-between;
+            align-items: center; cursor: pointer; font-weight: bold; font-size: 13px; color: #ffeb3b;
+            user-select: none;
+        }
+        .settings-header:hover { background: #2a2a2a; }
+        .collapse-arrow { font-size: 16px; transition: transform 0.3s; }
+        .collapse-arrow.collapsed { transform: rotate(-90deg); }
+
+        .settings-body {
+            padding: 12px 15px; display: flex; flex-direction: column; gap: 10px;
+            transition: max-height 0.3s ease;
+        }
+        .settings-body.hidden { display: none; }
+
+        .settings-row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; font-size: 12px; }
+        .settings-group { display: flex; align-items: center; gap: 6px; }
         .settings-group input {
-            background: #333; border: 1px solid #555; color: #fff; padding: 6px 10px;
-            border-radius: 4px; font-size: 13px;
+            background: #333; border: 1px solid #555; color: #fff; padding: 5px 8px;
+            border-radius: 4px; font-size: 12px;
         }
+        
         .movie-inputs-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; width: 100%;
-            background: #222; padding: 10px; border-radius: 6px; border: 1px dashed #444;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%;
+            background: #222; padding: 8px; border-radius: 6px; border: 1px dashed #444;
         }
-        .movie-input-item { display: flex; align-items: center; gap: 5px; font-size: 12px; }
+        @media (max-width: 768px) {
+            .movie-inputs-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .movie-input-item { display: flex; align-items: center; gap: 5px; font-size: 11px; }
+        .movie-input-item span { min-width: 24px; font-weight: bold; color: #aaa; }
         .movie-input-item input {
-            background: #333; border: 1px solid #555; color: #fff; padding: 4px 8px;
-            border-radius: 4px; width: 100%; font-size: 12px;
+            background: #333; border: 1px solid #555; color: #fff; padding: 4px 6px;
+            border-radius: 4px; width: 100%; font-size: 11px;
         }
+
+        .settings-footer-row { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
         .save-settings-btn {
-            background: #2e7d32; color: #fff; border: none; padding: 8px 20px;
-            border-radius: 4px; font-weight: bold; cursor: pointer; align-self: flex-start;
+            background: #2e7d32; color: #fff; border: none; padding: 6px 16px;
+            border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;
         }
         .save-settings-btn:hover { background: #1b5e20; }
 
         /* မျက်နှာပြင် ၁၂ ခု ရွေးရန် Tabs */
         .screens-nav {
-            background: #181818; padding: 12px; border-radius: 8px; margin-bottom: 15px;
+            background: #181818; padding: 10px; border-radius: 8px; margin-bottom: 12px;
             display: flex; gap: 8px; overflow-x: auto; white-space: nowrap;
         }
         .screen-tab {
-            background: #333; color: #bbb; border: 1px solid #444; padding: 8px 14px;
-            border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold;
+            background: #333; color: #bbb; border: 1px solid #444; padding: 6px 12px;
+            border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;
             transition: all 0.2s;
         }
         .screen-tab:hover { background: #444; color: #fff; }
         .screen-tab.active { background: #ffeb3b; color: #000; border-color: #ffeb3b; }
 
         .summary-box {
-            background: #1e1e1e; border: 1px solid #333; padding: 15px; border-radius: 8px;
-            margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-around;
+            background: #1e1e1e; border: 1px solid #333; padding: 12px; border-radius: 8px;
+            margin-bottom: 15px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: space-around;
         }
-        .summary-item { text-align: center; font-size: 14px; }
-        .summary-item span { display: block; font-weight: bold; font-size: 16px; margin-top: 4px; }
+        .summary-item { text-align: center; font-size: 13px; }
+        .summary-item span { display: block; font-weight: bold; font-size: 15px; margin-top: 2px; }
 
         .seat-map-outer {
-            width: 100%; overflow-x: auto; background: #1e1e1e; padding: 20px 15px;
+            width: 100%; overflow-x: auto; background: #1e1e1e; padding: 15px;
             border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         .seat-map-inner { display: inline-block; white-space: nowrap; min-width: 980px; width: 100%; }
         
-        /* ဇာတ်ကားနာမည်၊ ရက်စွဲနှင့် ပွဲချိန်ပြမည့် ခေါင်းစဉ်ပိုင်း */
         .movie-display-header {
-            text-align: center; background: #252525; border: 1px solid #444; padding: 12px;
-            border-radius: 6px; margin-bottom: 15px;
+            text-align: center; background: #252525; border: 1px solid #444; padding: 10px;
+            border-radius: 6px; margin-bottom: 12px;
         }
-        .movie-title-text { font-size: 20px; font-weight: bold; color: #ffeb3b; margin-bottom: 4px; }
-        .movie-info-sub { font-size: 13px; color: #aaa; }
+        .movie-title-text { font-size: 18px; font-weight: bold; color: #ffeb3b; margin-bottom: 2px; }
+        .movie-info-sub { font-size: 12px; color: #aaa; }
 
-        .screen { background: #e0e0e0; color: #000; text-align: center; padding: 8px; font-weight: bold; margin: 0 auto 25px auto; width: 100%; border-radius: 4px; box-shadow: 0 0 15px rgba(255,255,255,0.4); letter-spacing: 2px; }
+        .screen { background: #e0e0e0; color: #000; text-align: center; padding: 6px; font-weight: bold; margin: 0 auto 20px auto; width: 100%; border-radius: 4px; box-shadow: 0 0 15px rgba(255,255,255,0.4); letter-spacing: 2px; font-size: 13px; }
         
-        .seat-row { display: flex; gap: 5px; margin-bottom: 6px; align-items: center; position: relative; }
-        .row-label { width: 35px; min-width: 35px; line-height: 32px; text-align: center; font-weight: bold; color: #fff; font-size: 14px; margin-left: 10px; }
+        .seat-row { display: flex; gap: 5px; margin-bottom: 5px; align-items: center; position: relative; }
+        .row-label { width: 30px; min-width: 30px; line-height: 28px; text-align: center; font-weight: bold; color: #fff; font-size: 13px; margin-left: 8px; }
         
         .tier-summary-badge {
-            margin-left: 15px; font-size: 12px; color: #ffeb3b; font-weight: bold;
-            background: #2a2a2a; padding: 6px 12px; border-radius: 4px; border: 1px solid #444;
-            min-width: 140px; display: inline-block; text-align: center;
+            margin-left: 12px; font-size: 11px; color: #ffeb3b; font-weight: bold;
+            background: #2a2a2a; padding: 4px 10px; border-radius: 4px; border: 1px solid #444;
+            min-width: 130px; display: inline-block; text-align: center;
         }
 
         .seat {
-            width: 26px; height: 32px; min-width: 26px; border-radius: 3px; font-size: 11px;
+            width: 25px; height: 30px; min-width: 25px; border-radius: 3px; font-size: 11px;
             display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
             user-select: none; color: #000; font-weight: bold; transition: transform 0.1s;
         }
         .seat:hover { transform: scale(1.15); z-index: 10; }
-        .empty { width: 26px; min-width: 26px; height: 32px; }
+        .empty { width: 25px; min-width: 25px; height: 30px; }
         
         .price-4000 { background-color: #777670; color: #fff; }
         .price-5000 { background-color: #9BBB59; }
@@ -115,47 +136,54 @@
         .admin-yellow { background-color: #ffcc00 !important; color: black !important; }
         .admin-purple { background-color: #9933ee !important; color: white !important; }
 
-        .legend { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px; font-size: 12px; }
-        .legend-item { display: flex; align-items: center; gap: 6px; }
-        .legend-box { width: 16px; height: 16px; border-radius: 3px; }
+        .legend { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 15px; font-size: 11px; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .legend-box { width: 14px; height: 14px; border-radius: 3px; }
     </style>
 </head>
 <body>
 
     <!-- Admin အရောင်ရွေးချယ်မှု -->
     <div class="admin-controls">
-        <span><b>Admin အရောင်ရွေးပါ:</b></span>
-        <button class="color-btn" style="background:#ff3333;" onclick="selectColor('red', this)">အနီ - ရောင်းပြီး</button>
+        <span><b>အရောင်:</b></span>
+        <button class="color-btn" style="background:#ff3333;" onclick="selectColor('red', this)">အနီ (ရောင်းပြီး)</button>
         <button class="color-btn" style="background:#ffcc00; color:#000;" onclick="selectColor('yellow', this)">အဝါ</button>
         <button class="color-btn" style="background:#9933ee;" onclick="selectColor('purple', this)">ခရမ်း</button>
         
-        <button class="reset-btn" id="resetBtn" onclick="handleResetClick()">Reset Current Screen (3 Clicks)</button>
+        <button class="reset-btn" id="resetBtn" onclick="handleResetClick()">Reset Screen (3 Clicks)</button>
     </div>
 
-    <!-- ရက်စွဲ၊ ပွဲချိန်နှင့် ဇာတ်ကားနာမည်များ စိတ်ကြိုက်ပြောင်းရန် Admin Panel -->
+    <!-- ဇက်စွဲ၊ ပွဲချိန်နှင့် ဇာတ်ကားနာမည်များ (မျှားဖြင့် ပိတ်/ဖွင့်နိုင်ရန်) -->
     <div class="settings-panel">
-        <div class="settings-row">
-            <div class="settings-group">
-                <label><b>ရက်စွဲ (၃ ရက်စာ):</b></label>
-                <input type="date" id="date1">
-                <input type="date" id="date2">
-                <input type="date" id="date3">
+        <div class="settings-header" onclick="toggleSettingsPanel()">
+            <span>⚙️ ရက်စွဲ၊ ပွဲချိန် နှင့် ဇာတ်ကားနာမည်များ သတ်မှတ်ရန် (ဆက်တင်များ)</span>
+            <span class="collapse-arrow" id="collapseArrow">▼</span>
+        </div>
+        <div class="settings-body" id="settingsBody">
+            <div class="settings-row">
+                <div class="settings-group">
+                    <label><b>ရက်စွဲ (၃ ရက်စာ):</b></label>
+                    <input type="date" id="date1">
+                    <input type="date" id="date2">
+                    <input type="date" id="date3">
+                </div>
+                <div class="settings-group">
+                    <label><b>ပွဲချိန် (၄ ချိန်):</b></label>
+                    <input type="text" id="time1" placeholder="ပွဲ ၁" style="width:85px;">
+                    <input type="text" id="time2" placeholder="ပွဲ ၂" style="width:85px;">
+                    <input type="text" id="time3" placeholder="ပွဲ ၃" style="width:85px;">
+                    <input type="text" id="time4" placeholder="ပွဲ ၄" style="width:85px;">
+                </div>
             </div>
-            <div class="settings-group">
-                <label><b>ပွဲချိန် (၄ ချိန်):</b></label>
-                <input type="text" id="time1" placeholder="ပွဲချိန် ၁" style="width:100px;">
-                <input type="text" id="time2" placeholder="ပွဲချိန် ၂" style="width:100px;">
-                <input type="text" id="time3" placeholder="ပွဲချိန် ၃" style="width:100px;">
-                <input type="text" id="time4" placeholder="ပွဲချိန် ၄" style="width:100px;">
+            <div>
+                <label style="font-size: 12px; color: #ffeb3b; font-weight: bold; display: block; margin-bottom: 4px;">Screen ၁၂ ခုအတွက် ဇာတ်ကားနာမည်များ:</label>
+                <div class="movie-inputs-grid" id="movieInputsContainer"></div>
+            </div>
+            <div class="settings-footer-row">
+                <span style="font-size: 11px; color: #888;">ပြင်ဆင်ပြီးပါက သိမ်းရန် နှိပ်ပါ</span>
+                <button class="save-settings-btn" onclick="saveSettings()">💾 ပြောင်းလဲမှုများ သိမ်းမည်</button>
             </div>
         </div>
-        <div>
-            <label style="font-size: 13px; color: #ffeb3b; font-weight: bold;">Screen ၁၂ ခုအတွက် ဇာတ်ကားနာမည်များ သတ်မှတ်ရန်:</label>
-            <div class="movie-inputs-grid" id="movieInputsContainer">
-                <!-- Javascript ဖြင့် Screen 1 မှ 12 ထိ ဇာတ်ကားနာမည်ထည့်ရန် Box များကို အလိုအလျောက် ဖန်တီးပေးပါမည် -->
-            </div>
-        </div>
-        <button class="save-settings-btn" onclick="saveSettings()">ချိန်ညှိချက်များနှင့် ဇာတ်ကားနာမည်များ သိမ်းမည်</button>
     </div>
 
     <!-- မျက်နှာပြင် ၁၂ ခု ရွေးရန် ခလုတ်များ -->
@@ -165,12 +193,11 @@
         <div class="summary-item" style="color: #ff3333;">အနီ (ရောင်းပြီး): <span id="count-red">0 ခုံ</span> (<span id="price-red">0</span> Ks)</div>
         <div class="summary-item" style="color: #ffcc00;">အဝါ: <span id="count-yellow">0 ခုံ</span> (<span id="price-yellow">0</span> Ks)</div>
         <div class="summary-item" style="color: #9933ee;">ခရမ်း: <span id="count-purple">0 ခုံ</span> (<span id="price-purple">0</span> Ks)</div>
-        <div class="summary-item" style="color: #ffeb3b; border-left: 1px solid #444; padding-left: 20px;">စုစုပေါင်းဝင်ငွေ: <span id="total-price">0</span> Ks</div>
+        <div class="summary-item" style="color: #ffeb3b; border-left: 1px solid #444; padding-left: 15px;">စုစုပေါင်းဝင်ငွေ: <span id="total-price">0</span> Ks</div>
     </div>
 
     <div class="seat-map-outer">
         <div class="seat-map-inner">
-            <!-- ဇာတ်ကားနာမည်၊ ရက်စွဲနှင့် ပွဲချိန်ကို ဇယားကွက်အထက်တွင် ထင်ရှားစွာပြရန် -->
             <div class="movie-display-header">
                 <div class="movie-title-text" id="displayMovieTitle">ဇာတ်ကားနာမည် မရှိသေးပါ</div>
                 <div class="movie-info-sub" id="displayMovieInfo">ရက်စွဲနှင့် ပွဲချိန် ရွေးချယ်ပါ</div>
@@ -183,12 +210,12 @@
 
     <div class="legend">
         <div class="legend-item"><div class="legend-box" style="background:#ff3333;"></div> အနီ - ရောင်းပြီး</div>
-        <div class="legend-item"><div class="legend-box price-4000"></div> 4,000 Ks (A)</div>
-        <div class="legend-item"><div class="legend-box price-5000"></div> 5,000 Ks (B-D)</div>
-        <div class="legend-item"><div class="legend-box price-6000"></div> 6,000 Ks (E-F)</div>
-        <div class="legend-item"><div class="legend-box price-7000"></div> 7,000 Ks (G-H)</div>
-        <div class="legend-item"><div class="legend-box price-8000"></div> 8,000 Ks (I-Q)</div>
-        <div class="legend-item"><div class="legend-box price-20000"></div> 20,000 Ks (R-S)</div>
+        <div class="legend-item"><div class="legend-box price-4000"></div> 4,000 (A)</div>
+        <div class="legend-item"><div class="legend-box price-5000"></div> 5,000 (B-D)</div>
+        <div class="legend-item"><div class="legend-box price-6000"></div> 6,000 (E-F)</div>
+        <div class="legend-item"><div class="legend-box price-7000"></div> 7,000 (G-H)</div>
+        <div class="legend-item"><div class="legend-box price-8000"></div> 8,000 (I-Q)</div>
+        <div class="legend-item"><div class="legend-box price-20000"></div> 20,000 (R-S)</div>
     </div>
 
     <script>
@@ -227,7 +254,7 @@
             settings: {
                 dates: ["2026-06-01", "2026-06-02", "2026-06-03"],
                 times: ["10:00 AM", "01:00 PM", "04:00 PM", "07:00 PM"],
-                movies: {} // screen_1 to screen_12 ဇာတ်ကားနာမည်များ
+                movies: {}
             },
             screens: {}
         };
@@ -237,6 +264,13 @@
             selectedAdminColor = color;
             document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('selected'));
             el.classList.add('selected');
+        }
+
+        function toggleSettingsPanel() {
+            const body = document.getElementById('settingsBody');
+            const arrow = document.getElementById('collapseArrow');
+            body.classList.toggle('hidden');
+            arrow.classList.toggle('collapsed');
         }
 
         async function fetchBinData() {
@@ -291,7 +325,6 @@
             document.getElementById('time3').value = globalData.settings.times[2] || '';
             document.getElementById('time4').value = globalData.settings.times[3] || '';
 
-            // ဇာတ်ကားနာမည်ထည့်ရန် Input Box ၁၂ ခုကို ဖန်တီးခြင်း
             const movieContainer = document.getElementById('movieInputsContainer');
             movieContainer.innerHTML = '';
             for (let i = 1; i <= 12; i++) {
@@ -300,7 +333,7 @@
                 
                 let div = document.createElement('div');
                 div.className = 'movie-input-item';
-                div.innerHTML = `<span>S${i}:</span><input type="text" id="m_input_${i}" value="${mName}" placeholder="ဇာတ်ကားနာမည်">`;
+                div.innerHTML = `<span>S${i}</span><input type="text" id="m_input_${i}" value="${mName}" placeholder="ဇာတ်ကားနာမည်">`;
                 movieContainer.appendChild(div);
             }
         }
@@ -375,7 +408,6 @@
             let timeText = (globalData.settings.times && globalData.settings.times[tIndex]) ? globalData.settings.times[tIndex] : `Show ${tIndex+1}`;
             let movieName = (globalData.settings.movies && globalData.settings.movies[currentScreenId]) ? globalData.settings.movies[currentScreenId] : 'ဇာတ်ကားနာမည် ထည့်ရန်ကျန်ပါသေးသည်';
 
-            // ဇယားကွက်အောက်/အပေါ်ရှိ Header တွင် ဇာတ်ကားနာမည်နှင့် အချက်အလက်များပြသရန်
             document.getElementById('displayMovieTitle').innerText = movieName;
             document.getElementById('displayMovieInfo').innerText = `Screen ${screenIndex + 1} | ရက်စွဲ: ${dateText} | ပွဲချိန်: ${timeText}`;
 
@@ -450,14 +482,13 @@
             document.getElementById('total-price').innerText = grandTotal.toLocaleString();
         }
 
-        // ဇယားကွက်တည်ဆောက်ခြင်း
         const container = document.getElementById('seatContainer');
         container.innerHTML = '';
 
         seatStructure.forEach(row => {
             if (row.type === 'gap') {
                 const gapDiv = document.createElement('div');
-                gapDiv.style.height = '16px';
+                gapDiv.style.height = '14px';
                 container.appendChild(gapDiv);
                 return;
             }
@@ -530,7 +561,7 @@
                 clearTimeout(resetTimer);
                 resetTimer = setTimeout(() => {
                     resetClickCount = 0;
-                    resetBtn.innerText = 'Reset Current Screen (3 Clicks)';
+                    resetBtn.innerText = 'Reset Screen (3 Clicks)';
                 }, 2000);
             } else {
                 clearTimeout(resetTimer);
@@ -541,7 +572,7 @@
                 resetClickCount = 0;
                 resetBtn.innerText = 'Cleared!';
                 setTimeout(() => {
-                    resetBtn.innerText = 'Reset Current Screen (3 Clicks)';
+                    resetBtn.innerText = 'Reset Screen (3 Clicks)';
                 }, 1500);
             }
         }
