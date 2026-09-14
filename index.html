@@ -138,6 +138,7 @@
 
         let selectedAdminColor = null;
         let seatData = {};
+        let isResetting = false; // ဒေတာ အသစ်ပြန်ဝင်လာတာကို ခေတ္တတားဆီးရန်
 
         function selectColor(color, el) {
             selectedAdminColor = color;
@@ -146,6 +147,7 @@
         }
 
         async function fetchSeats() {
+            if (isResetting) return; // Reset လုပ်နေစဉ်အတွင်း ဆာဗာမှ ဒေတာအဟောင်း ပြန်ဆွဲတင်ခြင်းကို တားဆီးသည်
             try {
                 const response = await fetch(API_URL + '/latest', {
                     headers: { 'X-Master-Key': MASTER_KEY }
@@ -284,9 +286,16 @@
                 }, 2000);
             } else {
                 clearTimeout(resetTimer);
-                seatData = {};
-                updateUI();
-                await saveSeats();
+                isResetting = true; // ဆာဗာမှ ဒေတာအဟောင်း ထပ်ဆွဲမလာအောင် ချက်ချင်းပိတ်မည်
+                seatData = {};      // ဒေတာအလွတ်ဖြစ်အောင် လုပ်မည်
+                updateUI();         // မျက်နှာပြင်ပေါ်က အရောင်နဲ့ စာရင်းချုပ်များကို ချက်ချင်း ရှင်းမည်
+                
+                await saveSeats();  // အွန်လိုင်း Cloud ဆီသို့ ဒေတာအလွတ် ပို့ပြီး အပြီးတိုင် ဖျက်မည်
+                
+                setTimeout(() => {
+                    isResetting = false; // ပြီးမှ ပြန်ဖွင့်မည်
+                }, 1000);
+
                 resetClickCount = 0;
                 resetBtn.innerText = 'Cleared!';
                 setTimeout(() => {
