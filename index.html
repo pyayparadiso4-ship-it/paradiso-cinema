@@ -268,7 +268,7 @@
             arrow.classList.toggle('collapsed');
         }
 
-        // GitHub Gist Data Fetching
+        // GitHub Gist Data Fetching (Fixed raw_url sync implementation)
         async function fetchBinData() {
             try {
                 const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
@@ -279,7 +279,10 @@
                 });
                 const result = await response.json();
                 if (result.files && result.files["cinema-seats.json"]) {
-                    let parsedContent = JSON.parse(result.files["cinema-seats.json"].content);
+                    const rawUrl = result.files["cinema-seats.json"].raw_url + "?t=" + new Date().getTime();
+                    const rawResponse = await fetch(rawUrl);
+                    const parsedContent = await rawResponse.json();
+                    
                     if (parsedContent && Object.keys(parsedContent).length > 0) {
                         globalData = parsedContent;
                     }
@@ -600,7 +603,10 @@
                 });
                 const result = await response.json();
                 if (result.files && result.files["cinema-seats.json"]) {
-                    let parsedContent = JSON.parse(result.files["cinema-seats.json"].content);
+                    const rawUrl = result.files["cinema-seats.json"].raw_url + "?t=" + new Date().getTime();
+                    const rawResponse = await fetch(rawUrl);
+                    const parsedContent = await rawResponse.json();
+                    
                     if (parsedContent && Object.keys(parsedContent).length > 0) {
                         let serverDataStr = JSON.stringify(parsedContent);
                         let localDataStr = JSON.stringify(globalData);
