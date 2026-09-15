@@ -214,9 +214,10 @@
     </div>
 
     <script>
-        // GitHub Gist Configuration
-        const GITHUB_TOKEN = "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";
-        const GIST_ID = "dba9e0a949c4a0abd7eed1b8c101fbd1";
+        // GitHub Gist Configuration (Updated & Verified)
+        const GITHUB_TOKEN = "ghp_wRZReNzh8FvwB41YjKqOdKN00cp9y80q5Ede";
+        const GIST_ID = "d3ee95aa8155531e902ef8781e6cf163";
+        const FILENAME = "paradiso_data.json"; // Gist ထဲက ဖိုင်အမည်နှင့် ကိုက်ညီစေရန်
 
         const seatStructure = [
             { label: 'A', price: 4000, tier: 4000, class: 'price-4000', seats: [26,25,24,23, 0, 22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5, 0, 4,3,2,1] },
@@ -268,7 +269,7 @@
             arrow.classList.toggle('collapsed');
         }
 
-        // GitHub Gist Data Fetching (Fixed raw_url sync implementation)
+        // GitHub Gist Data Fetching
         async function fetchBinData() {
             try {
                 const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
@@ -278,11 +279,8 @@
                     }
                 });
                 const result = await response.json();
-                if (result.files && result.files["cinema-seats.json"]) {
-                    const rawUrl = result.files["cinema-seats.json"].raw_url + "?t=" + new Date().getTime();
-                    const rawResponse = await fetch(rawUrl);
-                    const parsedContent = await rawResponse.json();
-                    
+                if (result.files && result.files[FILENAME]) {
+                    let parsedContent = JSON.parse(result.files[FILENAME].content);
                     if (parsedContent && Object.keys(parsedContent).length > 0) {
                         globalData = parsedContent;
                     }
@@ -310,7 +308,7 @@
                     },
                     body: JSON.stringify({
                         files: {
-                            "cinema-seats.json": {
+                            [FILENAME]: {
                                 content: JSON.stringify(globalData, null, 2)
                             }
                         }
@@ -602,11 +600,8 @@
                     }
                 });
                 const result = await response.json();
-                if (result.files && result.files["cinema-seats.json"]) {
-                    const rawUrl = result.files["cinema-seats.json"].raw_url + "?t=" + new Date().getTime();
-                    const rawResponse = await fetch(rawUrl);
-                    const parsedContent = await rawResponse.json();
-                    
+                if (result.files && result.files[FILENAME]) {
+                    let parsedContent = JSON.parse(result.files[FILENAME].content);
                     if (parsedContent && Object.keys(parsedContent).length > 0) {
                         let serverDataStr = JSON.stringify(parsedContent);
                         let localDataStr = JSON.stringify(globalData);
